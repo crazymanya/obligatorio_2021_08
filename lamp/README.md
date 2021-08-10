@@ -30,3 +30,6 @@ command:
 Once done, you can check the results by browsing to http://localhost/index.php.
 You should see a simple test page and a list of databases retrieved from the
 database server.
+
+# Obligatorio 2021 - Taller de Linux
+Bajo la siguiente ruta "/lamp/roles/common/tasks"
