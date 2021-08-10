@@ -1,22 +1,72 @@
 ---
 # This playbook contains common plays that will be run on all nodes.
 
-- name: Install ntp
-  yum: name=ntp state=present
+- name: Install chrony
+  yum:
+    name: chrony
+    state: present
   tags: ntp
+  when: ansible_os_family == "RedHat"
+
+- name: Install ntp
+  apt:
+    package: ntp,ntpdate
+    state: present
+    update_cache: yes
+  tags: ntp
+  when: ansible_os_family == "Debian"
 
 - name: Install common dependencies
-  yum: name={{ item }} state=installed
-  with_items:
-   - libselinux-python
-   - libsemanage-python
-   - firewalld
+  yum: 
+    name: "{{ item }}" 
+    state: present
+  loop:
+  - python3-libselinux.x86_64
+  - policycoreutils-python-utils
+  - firewalld
+  when: ansible_os_family == "RedHat"
+
+- name: Install common dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - python3
+    - policycoreutils
+    - ufw
+  when: ansible_os_family == "Debian"
 
 - name: Configure ntp file
-  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  template: 
+    src: chrony.conf.j2 
+    dest: /etc/chrony.conf
   tags: ntp
-  notify: restart ntp
+  notify:
+    - restart chrony
+  when: ansible_os_family == "RedHat"
+
+- name: Configure ntp file
+  template:
+    src: ntp.conf.j2
+    dest: /etc/ntp.conf
+  tags: ntp
+  notify:
+    - restart ntp ubuntu
+  when: ansible_os_family == "Debian"
 
 - name: Start the ntp service
-  service: name=ntpd state=started enabled=yes
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
   tags: ntp
+  when: ansible_os_family == "RedHat"
+
+- name: Start the ntp service
+  service:
+    name: ntp
+    state: started
+    enabled: yes
+  tags: ntp
+  when: ansible_os_family == "Debian"
+
