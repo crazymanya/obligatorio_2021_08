@@ -9,16 +9,18 @@
   roles:
   - common
 
-#- name: configure and deploy the webservers and application code
-#  hosts: webservers
-#  remote_user: ansible
+- name: configure and deploy the webservers and application code
+  hosts: webservers
+  remote_user: ansible
+  become: yes
 
-#  roles:
-#    - web
+  roles:
+    - web
 
-#- name: deploy MySQL and configure the databases
-#  hosts: dbservers
-#  remote_user: ansible
+- name: deploy MySQL and configure the databases
+  hosts: dbservers
+  remote_user: ansible
+  become: yes
 
-#  roles:
-#    - db
+  roles:
+    - db

@@ -7,3 +7,11 @@ ubuntu1 ansible_host=192.168.56.112
 [linux:children]
 ubuntu
 centos
+
+[webservers:children]
+centos
+ubuntu
+
+[dbservers:children]
+centos
+ubuntu

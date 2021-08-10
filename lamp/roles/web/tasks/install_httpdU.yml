@@ -2,42 +2,40 @@
 # These tasks install http and the php modules.
 
 - name: Install httpd and php
-  yum:
+  apt:
     name: "{{ item }}"
     state: present
   loop:
-  - httpd
+  - apache2
   - php
   - php-mysqlnd
 
 - name: Install web role specific dependencies
-  yum:
+  apt:
     name: "{{ item }}"
-    state: installed
+    state: present
   loop:
   - git
 
-- name: Start firewalld
+- name: Start UFW
   service:
-    name: firewalld
+    name: ufw
     state: started
     enabled: yes
 
 - name: insert firewalld rule for httpd
-  firewalld:
+  ufw:
     port: "{{ httpd_port }}/tcp"
-    permanent: true
     state: enabled
-    immediate: yes
-
-- name: http service state
+    
+- name: apache service state
   service:
-    name: httpd
+    name: apache2
     state: started
     enabled: yes
 
-- name: Configure SELinux to allow httpd to connect to remote database
-  seboolean:
-    name: httpd_can_network_connect_db
-    state: true
-    persistent: yes
+    #- name: Configure SELinux to allow httpd to connect to remote database
+    #  seboolean:
+    #    name: httpd_can_network_connect_db
+    #    state: true
+    #    persistent: yes
